@@ -14,8 +14,8 @@ from word2number import w2n
      
       
 class textprocess():
-  productinfo ={"warna":56  ,"amul":56 ,   "nandini":58 , "gokul":54,              
-               'mugdal'80   ,'masoordal':80, 'Masoor':60,'Harbhara':70,'Toordal':70
+  productinfo ={"warna":56,"amul":56 ,"nandini":58 , "gokul":54,              
+               'mugdal':80   ,'masoordal':80, 'Masoor':60,'Harbhara':70,'Toordal':70,
                 'star':120,'safola':130,'fortune':130,"gemini":128,
                 'vim':10,'surfexcel':10,'vim':10,'wheel':8,'tiptop':7, 
                 'litre':1,'kilo':1,}
@@ -280,9 +280,8 @@ def switch4(arg4):
           }
   return dictl.get(arg4," I don't understand your response plz make it correct")
 
-def random_response(arg):s
-  randomdict = {
-      1:"sorry I didn't hear that ",
+def random_response(arg):
+  randomdict = { 1:"sorry I didn't hear that ",
       2:"please specify your input in correct manner which I can understand",
       3:"plz give the correct input so I can understand.\nTo order new item just send *Hi* here" ,
       4:"Ohh I didn't see that coming make it more specific in a way I can understand",
