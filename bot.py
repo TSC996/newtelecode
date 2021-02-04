@@ -1,3 +1,4 @@
+import telegrambot as tb
 import logging
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 import os
@@ -20,9 +21,13 @@ def help(update, context):
     """Send a message when the command /help is issued."""
     update.message.reply_text('Help!')
 
-def echo(update, context):
+def response(update, context):
     """Echo the user message."""
-    update.message.reply_text(update.message.text)
+    try: 
+      cust= update.message.chat.first_name + update.message.chat.last_name
+    except:
+      cust = update.message.chat.first_name  
+    update.message.reply_text(tb.sms_reply(update.message.text,cust))
 
 def error(update, context):
     """Log Errors caused by Updates."""
