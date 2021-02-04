@@ -129,7 +129,7 @@ class textprocess():
                       pce = productinfo['product']
                       flag+=1
                       if 'quantity' in mp:
-                          net = pce * mp['quantity']
+                          net = pce * int(mp['quantity'])
                       else:
                           net = pce*1
                       if "weight" in mp:
