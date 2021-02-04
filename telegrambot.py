@@ -14,8 +14,11 @@ from word2number import w2n
      
       
 class textprocess():
-  productinfo ={"warna":56,"amul":56,"nandini":58,"gokul":54,'litre':1,'kilo':1,
-               'mugdal':70,'masoordal':80,'star':120,'safola':130,'vim':10}
+  productinfo ={"warna":56  ,"amul":56 ,   "nandini":58 , "gokul":54,              
+               'mugdal'80   ,'masoordal':80, 'Masoor':60,'Harbhara':70,'Toordal':70
+                'star':120,'safola':130,'fortune':130,"gemini":128,
+                'vim':10,'surfexcel':10,'vim':10,'wheel':8,'tiptop':7, 
+                'litre':1,'kilo':1,}
   
   doc = {
   'instruction':['immediately','fast','before','as soon as'],
@@ -277,7 +280,7 @@ def switch4(arg4):
           }
   return dictl.get(arg4," I don't understand your response plz make it correct")
 
-def random_response(arg):
+def random_response(arg):s
   randomdict = {
       1:"sorry I didn't hear that ",
       2:"please specify your input in correct manner which I can understand",
@@ -323,21 +326,21 @@ class sub1():
           return  sendtxt(switch1("Hi"),self.cust)
         
       else:
-          if arg == "cat":
+          if "cat" in arg:
               self.pot[self.cust] = ["hi"]
               if self.cust in contacts:   # this is for helping new user
                   return switch1("Hi")
               else:
                   return switch("Hi2.0")
             
-          elif arg=="cart":
+          elif "cart" in arg:
               sp = obj.cart[self.cust]
               if sp== "" :
                    return "your cart is empty \njust send *Hi* and add items in your cart"
               else:
                    return  "your cart till now\n"+sp
                 
-          elif arg == "place":
+          elif "place" in arg :
               #self.pot1[self.cust].append(self.pot[self.cust])
               self.mainDB[self.cust].append(self.pot[self.cust])
               mpl = obj.cart[self.cust]
@@ -356,14 +359,14 @@ class sub1():
               pot = self.pot[self.cust]
               if len(pot) == 2:
                   if pot[-1] in "1234":
-                      return urls(pot[-1])#switch1(pot[-1])]
+                      return urls(pot[-1])+"\n"+switch1(pot[-1])
                   else:
-                      return sendtxt("plz give the correct input sdo I can understand.",self.cust) 
+                      return sendtxt("plz give the correct input so I can understand.",self.cust) 
               elif len(pot) == 3:
                   if pot[-1] in "12345":
                       return sendtxt(switch2(pot[-2]),self.cust)
                   else:
-                      return sendtxt("plz give the correct input sdo I can understand.",self.cust)
+                      return sendtxt("plz give the correct input so I can understand.",self.cust)
   
               elif len(pot) == 4:
                   #self.pot[self.cust] = []
@@ -397,6 +400,8 @@ def sms_reply(msg,remote_number = "+917666779269"):
       contacts[remote_number].cart_df[remote_number].loc[len(contacts[remote_number].cart_df[remote_number].index) , remote_number] = am
       
       mk=next(contacts[remote_number],am,remote_number)
+     
+        
       
   else:
       contacts[remote_number]=sub1(remote_number)
@@ -410,4 +415,4 @@ def sms_reply(msg,remote_number = "+917666779269"):
       textprocess(remote_number).cart[remote_number] = ""
       mk = rules()
   return str(mk)
-
+ 
