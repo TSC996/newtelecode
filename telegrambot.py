@@ -429,6 +429,7 @@ def sms_reply(msg,remote_number = "+917666779269"):
       contacts[remote_number].cart_df={remote_number:pd.DataFrame({remote_number:[]})}
       contacts[remote_number].cart_df[remote_number].loc[len(contacts[remote_number].cart_df[remote_number].index) , remote_number] = am
       #mk = next(contacts[remote_number],am)
+      textprocess(remote_number).cart[remote_number] = ""
       mk = rules()
   return str(mk)
 
