@@ -1,12 +1,4 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[1]:
-
-
-
 import pandas as pd
- 
 import random
 import pandas as pd
 import en_core_web_sm
@@ -41,16 +33,17 @@ class textprocess():
   text =doc['company']+doc['offers']+ doc["order"]+doc["product"]+doc["price"]+doc["quantity"]+doc['enquiry']+doc['subcat']+doc['weight']
   text=''.join(text)
   nlp = en_core_web_sm.load()
-  total = {"+917666779269":0}
+
   cart = {"+917666779269":""}
   
   def __init__(self,cust):
       self.cust = cust
+       
 
   def regex(self,senti):
       my = []
       sent = senti.split()
-      print(0)
+     
       for i in sent:
           try:
               x=re.search(i,self.text)
@@ -98,7 +91,7 @@ class textprocess():
   
   def tree_enquiry(self,mp , sr = '',flag=0):
       doc = self.doc
-      print(1)
+      
       productinfo = self.productinfo
       if 'enquiry' in mp:
           flag  += 1
@@ -163,8 +156,9 @@ class textprocess():
                       
                   else:
                       sr+="    " + str(mp['quantity']) +"   "+str(net)
+                  total[self.cust] += net
                   self.cart[self.cust] += "\n" + sr
-                  return  self.cart[self.cust] 
+                  return   "your cart till now\n"+self.cart[self.cust] 
               else:
                   return switch1(str((doc['subcat'].index(mp['subcat']))+1))
           else:
@@ -182,8 +176,9 @@ class textprocess():
                       
                   else:
                       sr += '   ' + mp['quantity']+'    '+str(net)
+                  total[self.cust] += net
                   self.cart[self.cust] += "\n" + sr
-                  return  self.cart[self.cust]
+                  return   "your cart till now\n"+self.cart[self.cust]
               else:
                   return "item not available in our stock"
       else:
@@ -218,7 +213,7 @@ class textprocess():
       obj = self
       om = self.hinglish(sent,flag)
       pm = obj.formdict(om)
-      print(pm)
+ 
       return self.tree_enquiry(pm)
        
 ##########################    process of chatbot   #############################
@@ -226,27 +221,18 @@ class textprocess():
  
 
 def finalcart(my_list,obj,cust):
-  #i=0
-  s = obj.cart[cust]
-  si = s
-  for item in my_list:
-      #if item[-1] == "1":
-      #i+=1
-      s+= cart(item[1],item[2],item[3])
-      #else:
-       #   return s
-  if s == si:
-      pass
-  else:
-      obj.cart[cust] += s
+  obj.cart[cust]
+  item = my_list
+  obj.cart[cust] +="\n"+ cart(item[1],item[2],item[3],cust)
   return obj.cart[cust]
 
-def cart(x,y,z):
+def cart(x,y,z,cust):
   dic1={"11":"amul milk","12":"warna milk","13":"gokul milk","14":"nandini milk",
         "21":"Mug dal","22":"Masoor dal","23":"Harbhara dal","24":"Toordal",
         "31":"Fortune oil","32":"Gemini oil","33":"Safola oil","34":"Star oil",
         "41":'Surfexcel soap',"42":"vim soap","43":"wheel soap","44":"tiptop soap"  }
   price_dict = {'1':{1:56,2:56,3:56,4:56},'2':{ 1:80,2:60,3:70,4:70,5:75},'3':{1:130,2:128,3:120,4:120,5:115},'4':{1:10,2:10,3:8,4:7,5:6}}
+  total[cust] += (price_dict[x][int(y)]) * int(z)
   return dic1[x+y]+"      " + z + " X " + "quan      " + str((price_dict[x][int(y)]) * int(z))
 
 def switch0(arg0="Hi"):
@@ -282,7 +268,7 @@ def urls(args):
   return dic[args]
 
 def switch3(arg3):
-  switchof="your product has been added to your cart..\nselect the correct option-- \n 1. add next item to cart \n 2. place order and payment"
+  switchof="product added to the cart \n\n'CAT'-> To view the subcategories\n'PLACE'->To place the order and confirm"
   return switchof
 
 def switch4(arg4):
@@ -314,7 +300,7 @@ def next(a,b,cust):
       return a.add_and_show(b,ap)
 
 def rules():
-  mp = '*WELcome to SuPeR MaRkeT* ...\n enjoy the new way of whatsapp shopping with your *trustworthy local businesses*\n\n shortkeys to place the orders ,checking prices,payments,cartlist etc...\n *CAT*-to get the list of products\n\n*CART*-to get to know about items you have added \n\n*PLACE*- confirming and go towards payments\n\n*ADD*- specifying this will help to directly add products in your cart\n\n*RATE*- rate our service out of 10\n\n*KHATA*- know your history of last 7 days orders\n\n*INST*- write specific instruction deemands for your product delivery '
+  mp = '*WELcome to SuPeR MaRkeT* ...\n enjoy the new way of whatsapp shopping with your *trustworthy local businesses*\n\n shortkeys to place the orders ,checking prices,payments,cartlist etc...\n *CAT*-to get the list of products\n\n*CART*-to get to know about items you have added \n\n*PLACE*- confirming and go towards payments\n\n'#*ADD*- specifying this will help to directly add products in your cart\n\n'#*RATE*- rate our service out of 10'#\n\n*KHATA*- know your history of last 7 days orders\n\n*INST*- write specific instruction deemands for your product delivery '
   return mp
 
  
@@ -335,31 +321,36 @@ class sub1():
       if arg in ["Hi","hi"]:
           self.pot[self.cust] = ["hi"]
           return  sendtxt(switch1("Hi"),self.cust)
+        
       else:
           if arg == "cat":
               self.pot[self.cust] = ["hi"]
-              if self.pot1[self.cust]==[]:   # this is for helping new user
+              if self.cust in contacts:   # this is for helping new user
                   return switch1("Hi")
               else:
                   return switch("Hi2.0")
+            
           elif arg=="cart":
               sp = obj.cart[self.cust]
-              if sp=="" and self.pot1[self.cust]==[]:
+              if sp== "" :
                    return "your cart is empty \njust send *Hi* and add items in your cart"
               else:
-                   return "your cart till now\n" + finalcart(self.pot1[self.cust],obj,self.cust)
-                  
-          elif arg =="place":
-                  #self.pot1[self.cust].append(self.pot[self.cust])
-                  self.mainDB[self.cust].append(self.pot[self.cust])
-                  mpl = obj.cart[self.cust]
-                  self.pot[self.cust] = []
-                  self.pot1[self.cust]=[]
-                  if mpl == "":
-                      return sendtxt("you cannot place the order as you dont have any items in your cart",self.cust )
-                  else:
-                      obj.cart[self.cust]=""
-                      return "thanks for shopping with us\n" + mpl
+                   return  "your cart till now\n"+sp
+                
+          elif arg == "place":
+              #self.pot1[self.cust].append(self.pot[self.cust])
+              self.mainDB[self.cust].append(self.pot[self.cust])
+              mpl = obj.cart[self.cust]
+              self.pot[self.cust] = []
+              self.pot1[self.cust]=[]
+              net = total[self.cust]
+              total[self.cust] = 0
+              if mpl ==  "":
+                  return sendtxt("you cannot place the order as you dont have any items in your cart",self.cust )
+              else:
+                  obj.cart[self.cust]=""
+                  return "thanks for shopping with us\n" + mpl+"\nTOTAL : "+str(net)
+            
           elif arg in ["1","2","3","4","5"]:
               self.pot[self.cust].append(arg)
               pot = self.pot[self.cust]
@@ -375,26 +366,12 @@ class sub1():
                       return sendtxt("plz give the correct input sdo I can understand.",self.cust)
   
               elif len(pot) == 4:
-                  if len(pot)==4:
-                      #self.pot[self.cust] = []
-                      self.pot1[self.cust].append(self.pot[self.cust])
-                      return sendtxt(switch3(pot[-1]),self.cust)
-              elif len(pot)==5:
-                  if pot[-1]=="1":
-                      #self.pot1[self.cust].append(self.pot[self.cust])
-                      self.pot[self.cust] = ["hi"]
-                      return sendtxt(switch1("Hi2.0") , self.cust)
-                  elif pot[-1] == "2":
-                      #self.pot1[self.cust].append(self.pot[self.cust])
-                      self.mainDB[self.cust].append(self.pot[self.cust])
-                      mpl = finalcart(self.pot1[self.cust],obj,self.cust)
-                      self.pot[self.cust] = []
-                      self.pot1[self.cust]=[]
-                      #
-                      return sendtxt("Thank you for shopping with us.....\nyour ordered items are--\nno.      item name    Netrate\n" + mpl ,self.cust)
-                      #return col_to_str(self.cart_df[self.cust].iloc[:,-1])
-                  else:
-                      return  sendtxt("plz give the correct input sdo I can understand.",self.cust) 
+                  #self.pot[self.cust] = []
+                  self.pot1[self.cust].append(self.pot[self.cust])
+                  self.pot[self.cust] = ["hi"]
+                  finalcart(self.pot1[self.cust][-1],obj,self.cust)
+                  return sendtxt(switch3(pot[-1]),self.cust)
+ 
               else:
                   self.pot[self.cust].pop(-1)
                   return sendtxt("plz give the correct input so I can understand.\nTo order new item just send *Hi* here",self.cust) 
@@ -411,18 +388,19 @@ class sub1():
 #####################3333333333333333333333########################3###################3
               
 contacts  = {'+917666779269':sub1('+917666779269')}
-
+total={"ok":0}
 def sms_reply(msg,remote_number = "+917666779269"):
    
   am = msg.lower()  
 
   if remote_number in contacts:
       contacts[remote_number].cart_df[remote_number].loc[len(contacts[remote_number].cart_df[remote_number].index) , remote_number] = am
-      print(remote_number)
+      
       mk=next(contacts[remote_number],am,remote_number)
       
   else:
       contacts[remote_number]=sub1(remote_number)
+      total[remote_number] = 0
       contacts[remote_number].pot[remote_number]=[]
       contacts[remote_number].pot1[remote_number]=[]
       contacts[remote_number].mainDB[remote_number]=[]
