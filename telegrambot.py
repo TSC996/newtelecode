@@ -253,7 +253,7 @@ class textprocess():
       obj = self
       om = self.hinglish(sent,flag)
       pm = obj.formdict(om)
-      print(pm)
+     
       return self.tree_enquiry(pm)
 
 def finalcart(my_list,obj,cust):
@@ -400,7 +400,7 @@ class sub1():
                   self.pot[self.cust].append(arg)
                   pot = self.pot[self.cust]
                   mayu = int(arg) 
-                  print(pot)
+                
                   if len(pot) == 2:
                       if pot[-1] in "1234":
                           return urls(pot[-1])+"\n"+switch1(pot[-1])
