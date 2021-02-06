@@ -474,5 +474,4 @@ def sms_reply(msg,remote_number = "+917666779269"):
       mk = rules()
   return str(mk)
       
-
  
