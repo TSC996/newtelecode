@@ -18,7 +18,7 @@ class textprocess():
                'mugdal':80   ,'masoordal':80, 'Masoor':60,'Harbhara':70,'Toordal':70,
                 'star':120,'safola':130,'fortune':130,"gemini":128,
                 'vim':10,'surfexcel':10,'vim':10,'wheel':8,'tiptop':7, 
-                'litre':1,'kilo':1,}
+                 }
   
   doc = {
   'instruction':['immediately','fast','before','as soon as'],
@@ -27,11 +27,11 @@ class textprocess():
       'order'  :['give','order', 'add','want'],
       "subcat" :['milk','dal','oil',"soap"],
       'product':['mugdal','toordal','harbhara','masoor','maggie'],
-      'weight' :['kilo','grams','litre'],
-      'company':['nesle','sunflower','amul', 'warna','nandini','sugar','gokul','star','gemini','safola','vim','wheel'],
+      'weight' :['kilo','grams','litre','kg'],
+      'company':['mugdal','masoordal','masoor','harbhara','toordal','amul', 'warna','nandini','gokul','star','gemini','fortune','safola','tiptop','surfexcel','vim','wheel'],
       'price'  :['rate','price','netrate','total'],
      'quantity':["a",'1','10','2', '3','4', '5', 'one', 'two' ,'three', 'four', 'five' ,'half','per'],
-    'greetings':["thank"]
+    'greetings':["thank",'sweet','thamkyou','thx']
       }
   text =doc['company']+doc['offers']+ doc["order"]+doc["product"]+doc["price"]+doc["quantity"]+doc['enquiry']+doc['subcat']+doc['weight']
   text=''.join(text)
@@ -96,7 +96,9 @@ class textprocess():
       doc = self.doc
       
       productinfo = self.productinfo
-      if 'enquiry' in mp:
+      if 'greetings' in mp:
+          return "welcome,I hope you liked it.."
+      elif 'enquiry' in mp:
           flag  += 1
           if 'subcat' in mp:
               flag+=1
@@ -141,12 +143,9 @@ class textprocess():
       doc = self.doc
       productinfo = self.productinfo
       if 'order' in mp:
-          flag  += 1
           if 'subcat' in mp:
-              flag+=1
               sr += mp['subcat']
               if 'company' in mp:
-                  flag+=1
                   sr=" "+mp['company']+ ' '+sr
                   pce = productinfo[mp['company']]
                   if 'quantity' in mp:
@@ -156,7 +155,6 @@ class textprocess():
                       mp['quantity']=1
                   if "weight" in mp:
                       sr+="    " + str(mp['quantity'])+' X '+mp['weight']+"   "+str(net)
-                      
                   else:
                       sr+="    " + str(mp['quantity']) +"   "+str(net)
                   total[self.cust] += net
@@ -185,7 +183,46 @@ class textprocess():
               else:
                   return "item not available in our stock"
       else:
-           return 0
+          if 'subcat' in mp:
+              flag+=1
+              sr += mp['subcat']
+              if 'company' in mp:
+                  flag+=1
+                  if 'price' in mp:
+                      pce = productinfo[mp['company']]
+                      flag+=1
+                      if 'quantity' in mp:
+                          net = pce * int(mp['quantity'])
+                      else:
+                          net = pce*1
+                      if "weight" in mp:
+                          return "the price of {} {} {} is {}".format(mp['quantity'],mp['weight'],mp['company'],net)
+                      else:
+                          return "the price of {} {} {} is {}".format(mp['quantity'],'litre',mp['company'],net)
+                  else:
+                      return "Yes ,your demanded item {} is available".format(mp['company'])
+              else:
+                  return switch1(str((doc['subcat'].index(mp['subcat']))+1))
+          else:
+              if 'product' in mp:
+                  flag+=1
+                  if 'price' in mp:
+                      pce = productinfo['product']
+                      flag+=1
+                      if 'quantity' in mp:
+                          net = pce * int(mp['quantity'])
+                      else:
+                          net = pce*1
+                      if "weight" in mp:
+                          return "the price of {}{} is {}".format(mp['quantity'],mp['weight'],mp['product'])
+                  else:
+                      return "Yes ,your demanded item {} is available".format(mp['product'])
+              else:
+                  return "item not available in our stock"
+       
+        
+        
+            
 
   def data_parts(self,text="give 1 litre warana milk"):
       common = {"noun":[],"verb":[],"adj":[],"digit":[],"unknown":[],"stop":[],"pronoun":[]}
@@ -216,12 +253,8 @@ class textprocess():
       obj = self
       om = self.hinglish(sent,flag)
       pm = obj.formdict(om)
- 
+      print(pm)
       return self.tree_enquiry(pm)
-       
-##########################    process of chatbot   #############################
-
- 
 
 def finalcart(my_list,obj,cust):
   obj.cart[cust]
@@ -246,7 +279,7 @@ def switch1(argument):
             "1":"code       company       rate(inRs)\n 1            amul milk            56 \n 2            warna milk          56 \n  3            gokul milk           56 \n  4            nandini milk        54",
              "2":"Code.        Company.          Rate \n 1.             Mug.                  80/kg\n 2.             Masoor.            60/kg\n 3.            Harbhara.          70/kg \n 4.             Toordal.            70/kg \n 5.             Masoordal.       75/kg",
              "3":"Code.         Company.       Price \n  1.               Fortune          130/kg \n 2.               Gemini.          128/kg \n 3.                Safola.          120/kg \n 4.               Star.                120/kg \n 5.                Kirtigold.       115/kg",
-             "4":"code       company       rate(inRs) \n 1.         surfexcel soap         10 \n 2         vim soap                  10 \n 3         wheel soap               8 \n 4         tiptop soap               7 \n 5         hamam soap            6",
+             "4":"code       company       rate(inRs) \n 1.         surfexcel soap         10 \n 2         vim soap                  10 \n 3         wheel soap               8 \n 4         tiptop soap               7 \n ",
            "Hi2.0": " to add next item in your cart,make your next choices \n1: milk \n2:dal\n3:oilProducts\n4: Soap ",
            }    
   
@@ -283,12 +316,15 @@ def switch4(arg4):
 def random_response(arg):
   randomdict = { 1:"sorry I didn't hear that ",
       2:"please specify your input in correct manner which I can understand",
-      3:"plz give the correct input so I can understand.\nTo order new item just send *Hi* here" ,
-      4:"Ohh I didn't see that coming make it more specific in a way I can understand",
-      5:"you can simply state *Hi* for making new order"
+ 
+      3:"Ohh I didn't see that coming make it more specific in a way I can understand"
+        
   }
   return randomdict[arg]
 
+def rules():
+  mp = '*WELcome to SuPeR MaRkeT* ...\n enjoy the new way of whatsapp shopping with your *trustworthy local businesses*\n\n shortkeys to place the orders ,checking prices,payments,cartlist etc...\n *CAT*-to get the list of products\n\n*CART*-to get to know about items you have added \n\n*PLACE*- confirming and go towards payments\n\n'#*ADD*- specifying this will help to directly add products in your cart\n\n'#*RATE*- rate our service out of 10'#\n\n*KHATA*- know your history of last 7 days orders\n\n*INST*- write specific instruction deemands for your product delivery '
+  return mp
 
 def sendtxt(obj1,msg):
   return obj1
@@ -296,15 +332,19 @@ def sendtxt(obj1,msg):
 def next(a,b,cust):
   ap = textprocess(cust)
   pm = ap.last(b,0)
-  if pm != 0:
+  if pm != "item not available in our stock":
       return pm
   else:
       return a.add_and_show(b,ap)
 
-def rules():
-  mp = '*WELcome to SuPeR MaRkeT* ...\n enjoy the new way of whatsapp shopping with your *trustworthy local businesses*\n\n shortkeys to place the orders ,checking prices,payments,cartlist etc...\n *CAT*-to get the list of products\n\n*CART*-to get to know about items you have added \n\n*PLACE*- confirming and go towards payments\n\n'#*ADD*- specifying this will help to directly add products in your cart\n\n'#*RATE*- rate our service out of 10'#\n\n*KHATA*- know your history of last 7 days orders\n\n*INST*- write specific instruction deemands for your product delivery '
-  return mp
 
+def wordnum(s):
+    for i in s.split():
+        try:
+            return (w2n.word_to_num(i)) 
+        except:
+            pass
+    return -1
  
 
 #################################################  CLASSES CODE FOR PROCEDURE THAT CHATBOT WILL FOLLW     ##################
@@ -337,7 +377,7 @@ class sub1():
               if sp== "" :
                    return "your cart is empty \njust send *Hi* and add items in your cart"
               else:
-                   return  "your cart till now\n"+sp
+                   return  "your cart till now\n"+sp+"\nTOTAL : "+str(total[self.cust])
                 
           elif "place" in arg :
               #self.pot1[self.cust].append(self.pot[self.cust])
@@ -351,42 +391,61 @@ class sub1():
                   return sendtxt("you cannot place the order as you dont have any items in your cart",self.cust )
               else:
                   obj.cart[self.cust]=""
-                  return "thanks for shopping with us\n" + mpl+"\nTOTAL : "+str(net)
+                  return "thanks for shopping with us\n" + mpl+"\nTOTAL : "+str(net)+"\nYour order will be delivered by half-hour,..\nvist the E- mart again...!!"
             
-          elif arg in ["1","2","3","4","5"]:
-              self.pot[self.cust].append(arg)
-              pot = self.pot[self.cust]
-              if len(pot) == 2:
-                  if pot[-1] in "1234":
-                      return urls(pot[-1])+"\n"+switch1(pot[-1])
-                  else:
-                      return sendtxt("plz give the correct input so I can understand.",self.cust) 
-              elif len(pot) == 3:
-                  if pot[-1] in "12345":
-                      return sendtxt(switch2(pot[-2]),self.cust)
-                  else:
-                      return sendtxt("plz give the correct input so I can understand.",self.cust)
-  
-              elif len(pot) == 4:
-                  #self.pot[self.cust] = []
-                  self.pot1[self.cust].append(self.pot[self.cust])
-                  self.pot[self.cust] = ["hi"]
-                  finalcart(self.pot1[self.cust][-1],obj,self.cust)
-                  return sendtxt(switch3(pot[-1]),self.cust)
- 
-              else:
-                  self.pot[self.cust].pop(-1)
-                  return sendtxt("plz give the correct input so I can understand.\nTo order new item just send *Hi* here",self.cust) 
+          else:
+              try:
+                  
+                   
+                  self.pot[self.cust].append(arg)
+                  pot = self.pot[self.cust]
+                  mayu = int(arg) 
+                  print(pot)
+                  if len(pot) == 2:
+                      if pot[-1] in "1234":
+                          return urls(pot[-1])+"\n"+switch1(pot[-1])
+                      else:
+                          return sendtxt("plz give the correct input so I can understand.",self.cust) 
+                  elif len(pot) == 3:
+                      if pot[-1] in "12345":
+                          return sendtxt(switch2(pot[-2]),self.cust)
+                      else:
+                          return sendtxt("plz give the correct input so I can understand.",self.cust)
 
-          else:# type(arg) == str:
-              self.pot[self.cust].append(arg)
-              pot = self.pot[self.cust]
-              if len(pot)==4:
-                  return sendtxt(switch3(pot[-1]),self.cust)
-              else:
-                  self.pot[self.cust].pop(-1)
-                  return sendtxt(random_response(random.randint(1,5)),self.cust)
-              
+ 
+                      
+                      if wordnum(pot[-1])!=-1: 
+                        self.pot1[self.cust].append(self.pot[self.cust])
+                        self.pot[self.cust] = ["hi"]
+                        finalcart(self.pot1[self.cust][-1],obj,self.cust)
+                        return sendtxt(switch3(pot[-1]),self.cust)
+                      else:
+                         self.pot[self.cust].pop(-1)
+                         return sendtxt("plz give the correct input so I can understand.\nTo order new item just send *Hi* here",self.cust) 
+                           
+
+                  else:
+                      self.pot[self.cust].pop(-1)
+                      return sendtxt("plz give the correct input so I can understand.\nTo order new item just send *Hi* here",self.cust) 
+              except:# type(arg) == str:
+                  
+                  pot = self.pot[self.cust]
+                  if len(pot)==4:
+                      wtm = wordnum(pot[-1])
+                      if wtm != -1:
+                        self.pot[self.cust][-1]=str(wtm)
+                        self.pot1[self.cust].append(self.pot[self.cust])
+                        self.pot[self.cust] = ["hi"]
+                        finalcart(self.pot1[self.cust][-1],obj,self.cust)
+                        return sendtxt(switch3(pot[-1]),self.cust)
+                      else:
+                         self.pot[self.cust].pop(-1)
+                         return sendtxt("plz give the correct input so I can understand.\nTo order new item just send *Hi* here",self.cust) 
+                           
+                      return sendtxt(switch3(pot[-1]),self.cust)
+                  else:
+                      #self.pot[self.cust].pop(-1)
+                      return sendtxt(random_response(random.randint(1,3)),self.cust)
 #####################3333333333333333333333########################3###################3
               
 contacts  = {'+917666779269':sub1('+917666779269')}
@@ -414,4 +473,6 @@ def sms_reply(msg,remote_number = "+917666779269"):
       textprocess(remote_number).cart[remote_number] = ""
       mk = rules()
   return str(mk)
+      
+
  
