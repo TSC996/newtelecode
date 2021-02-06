@@ -472,6 +472,6 @@ def sms_reply(msg,remote_number = "+917666779269"):
       #mk = next(contacts[remote_number],am)
       textprocess(remote_number).cart[remote_number] = ""
       mk = rules()
-  return str(mk)
+  return (str(mk))
       
  
