@@ -2,7 +2,7 @@ import telegrambot as tb
 import logging
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 import os
-PORT = int(os.environ.get('PORT'))
+PORT = int(os.environ.get('PORT',8443))
 
 # Enable logging
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
