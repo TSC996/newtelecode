@@ -15,10 +15,10 @@ from word2number import w2n
       
 class textprocess():
   productinfo ={"warna":56,"amul":56 ,"nandini":58 , "gokul":54,              
-               'mugdal':80   ,'masoordal':80, 'Masoor':60,'Harbhara':70,'Toordal':70,
+               'mug':80   ,'masoor':80, 'Harbhara':70,'Toor':70,
                 'star':120,'safola':130,'fortune':130,"gemini":128,
                 'vim':10,'surfexcel':10,'vim':10,'wheel':8,'tiptop':7, 
-                 }
+                'litre':1000 ,"kilo":1000,"kg":1000,"mililitre":1,"grams":1,"ml":1,'gms':1}
   
   doc = {
   'instruction':['immediately','fast','before','as soon as'],
@@ -27,8 +27,8 @@ class textprocess():
       'order'  :['give','order', 'add','want'],
       "subcat" :['milk','dal','oil',"soap"],
       'product':['mugdal','toordal','harbhara','masoor','maggie'],
-      'weight' :['kilo','grams','litre','kg'],
-      'company':['mugdal','masoordal','masoor','harbhara','toordal','amul', 'warna','nandini','gokul','star','gemini','fortune','safola','tiptop','surfexcel','vim','wheel'],
+      'weight' :['kilo','grams','litre','kg',"gms","ml","mililitres"],
+      'company':['mug','masoor','masoor','harbhara','toor','amul', 'warna','nandini','gokul','star','gemini','fortune','safola','tiptop','surfexcel','vim','wheel'],
       'price'  :['rate','price','netrate','total'],
      'quantity':["a",'1','10','2', '3','4', '5', 'one', 'two' ,'three', 'four', 'five' ,'half','per'],
     'greetings':["thank",'sweet','thamkyou','thx']
@@ -52,7 +52,6 @@ class textprocess():
               x=re.search(i,self.text)
               my.append(x.group())
           except:
-           #   print(0)
               pass
       return my
   
@@ -94,20 +93,15 @@ class textprocess():
   
   def tree_enquiry(self,mp , sr = '',flag=0):
       doc = self.doc
-      
       productinfo = self.productinfo
       if 'greetings' in mp:
           return "welcome,I hope you liked it.."
       elif 'enquiry' in mp:
-          flag  += 1
           if 'subcat' in mp:
-              flag+=1
               sr += mp['subcat']
               if 'company' in mp:
-                  flag+=1
                   if 'price' in mp:
                       pce = productinfo[mp['company']]
-                      flag+=1
                       if 'quantity' in mp:
                           net = pce * int(mp['quantity'])
                       else:
@@ -122,10 +116,8 @@ class textprocess():
                   return switch1(str((doc['subcat'].index(mp['subcat']))+1))
           else:
               if 'product' in mp:
-                  flag+=1
                   if 'price' in mp:
                       pce = productinfo['product']
-                      flag+=1
                       if 'quantity' in mp:
                           net = pce * int(mp['quantity'])
                       else:
@@ -149,17 +141,21 @@ class textprocess():
                   sr=" "+mp['company']+ ' '+sr
                   pce = productinfo[mp['company']]
                   if 'quantity' in mp:
-                      net = pce * int(mp['quantity'])
+                      mp['quantity']=w2n.word_to_num(mp['quantity'])
+                      net = pce *(mp['quantity'])
                   else:
                       net = pce*1
                       mp['quantity']=1
                   if "weight" in mp:
+                      kpl = productinfo[mp['weight']]
+                      net = net * kpl//1000
+                      
                       sr+="    " + str(mp['quantity'])+' X '+mp['weight']+"   "+str(net)
                   else:
                       sr+="    " + str(mp['quantity']) +"   "+str(net)
                   total[self.cust] += net
                   self.cart[self.cust] += "\n" + sr
-                  return   "your cart till now\n"+self.cart[self.cust] 
+                  return   "your cart till now\n"+ self.cart[self.cust] + "\nTOTAL:" + str(total[self.cust])
               else:
                   return switch1(str((doc['subcat'].index(mp['subcat']))+1))
           else:
@@ -168,31 +164,31 @@ class textprocess():
                   sr+=mp['product']
                   pce = productinfo[mp['product']]
                   if 'quantity' in mp:
+                      mp['quantity']=w2n.word_to_num(mp['quantity'])
                       net = pce * mp['quantity']
                   else:
                       net = pce*1
                       mp['quantity'] = 1
                   if "weight" in mp:
+                      kpl = productinfo[mp['weight']]
+                      net = net * kpl//1000
                       sr += '    ' + mp['quantity']+' '+mp['weight']+'    '+str(net)
                       
                   else:
                       sr += '   ' + mp['quantity']+'    '+str(net)
                   total[self.cust] += net
-                  self.cart[self.cust] += "\n" + sr
-                  return   "your cart till now\n"+self.cart[self.cust]
+                  self.cart[self.cust] += "\n" + sr 
+                  return   "your cart till now\n"+self.cart[self.cust]+"\nTOTAL:"+str(total[self.cust])
               else:
                   return "item not available in our stock"
       else:
           if 'subcat' in mp:
-              flag+=1
               sr += mp['subcat']
               if 'company' in mp:
-                  flag+=1
                   if 'price' in mp:
                       pce = productinfo[mp['company']]
-                      flag+=1
                       if 'quantity' in mp:
-                          net = pce * int(mp['quantity'])
+                          net = pce * w2n.word_to_num(mp['quantity'])
                       else:
                           net = pce*1
                       if "weight" in mp:
@@ -205,12 +201,10 @@ class textprocess():
                   return switch1(str((doc['subcat'].index(mp['subcat']))+1))
           else:
               if 'product' in mp:
-                  flag+=1
                   if 'price' in mp:
                       pce = productinfo['product']
-                      flag+=1
                       if 'quantity' in mp:
-                          net = pce * int(mp['quantity'])
+                          net = pce * w2n.word_to_num(mp['quantity'])
                       else:
                           net = pce*1
                       if "weight" in mp:
@@ -240,8 +234,8 @@ class textprocess():
               common['verb'].append(token.text)
           elif token.is_digit == True:
               common['digit'].append(token.text)
+              self.doc['quantity'].append(token.text)
           elif token.is_stop == True:
-              #pass
               common['stop'].append(token.text)
           elif token.is_punct == True:
               pass
@@ -253,23 +247,39 @@ class textprocess():
       obj = self
       om = self.hinglish(sent,flag)
       pm = obj.formdict(om)
-     
+      print(pm)
       return self.tree_enquiry(pm)
 
-def finalcart(my_list,obj,cust):
+def finalcart(my_list,obj,cust,my_dict):
   obj.cart[cust]
   item = my_list
-  obj.cart[cust] +="\n"+ cart(item[1],item[2],item[3],cust)
+  obj.cart[cust] +="\n"+ cart(item[1],item[2],item[3],cust,my_dict,obj)
   return obj.cart[cust]
 
-def cart(x,y,z,cust):
+def cart(x,y,z,cust,my_dict,obj):
+    
   dic1={"11":"amul milk","12":"warna milk","13":"gokul milk","14":"nandini milk",
         "21":"Mug dal","22":"Masoor dal","23":"Harbhara dal","24":"Toordal",
         "31":"Fortune oil","32":"Gemini oil","33":"Safola oil","34":"Star oil",
         "41":'Surfexcel soap',"42":"vim soap","43":"wheel soap","44":"tiptop soap"  }
-  price_dict = {'1':{1:56,2:56,3:56,4:56},'2':{ 1:80,2:60,3:70,4:70,5:75},'3':{1:130,2:128,3:120,4:120,5:115},'4':{1:10,2:10,3:8,4:7,5:6}}
-  total[cust] += (price_dict[x][int(y)]) * int(z)
-  return dic1[x+y]+"      " + z + " X " + "quan      " + str((price_dict[x][int(y)]) * int(z))
+
+  price_dict = {'1':{1:56,2:56,3:56,4:56},
+                '2':{ 1:80,2:60,3:70,4:70,5:75},
+                '3':{1:130,2:128,3:120,4:120,5:115},
+                '4':{1:10,2:10,3:8,4:7,5:6}}
+  
+  try:
+      s1 = obj.productinfo[my_dict['weight']]
+      s2=int(w2n.word_to_num(my_dict['quantity']))
+      cost = (price_dict[x][int(y)]) * int(s1)*s2//1000
+      total[cust] += cost
+      return dic1[x+y]+"      " + z + " X " + my_dict['weight']+"    " + str(cost)
+  except:
+      cost = (price_dict[x][int(y)]) * int(z)
+      total[cust] += cost
+      return dic1[x+y]+"      " + z + " X " + "quan    "+"    " + str(cost)
+        
+      
 
 def switch0(arg0="Hi"):
   return switch1("Hi")
@@ -323,7 +333,7 @@ def random_response(arg):
   return randomdict[arg]
 
 def rules():
-  mp = '*WELcome to SuPeR MaRkeT* ...\n enjoy the new way of whatsapp shopping with your *trustworthy local businesses*\n\n shortkeys to place the orders ,checking prices,payments,cartlist etc...\n *CAT*-to get the list of products\n\n*CART*-to get to know about items you have added \n\n*PLACE*- confirming and go towards payments\n\n'#*ADD*- specifying this will help to directly add products in your cart\n\n'#*RATE*- rate our service out of 10'#\n\n*KHATA*- know your history of last 7 days orders\n\n*INST*- write specific instruction deemands for your product delivery '
+  mp = 'WELcome to SuPeR MaRkeT ...\n enjoy the new way of whatsapp shopping with your trustworthy local businesses\n\n shortkeys to place the orders ,checking prices,payments,cartlist etc...\n CAT-to get the list of products\n\nCART-to get to know about items you have added \n\nPLACE- confirming and go towards payments\n\n'#*ADD*- specifying this will help to directly add products in your cart\n\n'#*RATE*- rate our service out of 10'#\n\n*KHATA*- know your history of last 7 days orders\n\n*INST*- write specific instruction deemands for your product delivery '
   return mp
 
 def sendtxt(obj1,msg):
@@ -335,7 +345,7 @@ def next(a,b,cust):
   if pm != "item not available in our stock":
       return pm
   else:
-      return a.add_and_show(b,ap)
+      return a.add_and_show(b,ap,ap.formdict(b))
 
 
 def wordnum(s):
@@ -359,7 +369,7 @@ class sub1():
   def __init__(self,cust):
       self.cust=cust
       
-  def add_and_show(self,arg,obj): 
+  def add_and_show(self,arg,obj,dictionary): 
       if arg in ["Hi","hi"]:
           self.pot[self.cust] = ["hi"]
           return  sendtxt(switch1("Hi"),self.cust)
@@ -367,7 +377,7 @@ class sub1():
       else:
           if "cat" in arg:
               self.pot[self.cust] = ["hi"]
-              if self.cust in contacts:   # this is for helping new user
+              if self.cust in contacts:   
                   return switch1("Hi")
               else:
                   return switch("Hi2.0")
@@ -400,7 +410,7 @@ class sub1():
                   self.pot[self.cust].append(arg)
                   pot = self.pot[self.cust]
                   mayu = int(arg) 
-                
+                  print(pot)
                   if len(pot) == 2:
                       if pot[-1] in "1234":
                           return urls(pot[-1])+"\n"+switch1(pot[-1])
@@ -413,8 +423,9 @@ class sub1():
                           return sendtxt("plz give the correct input so I can understand.",self.cust)
 
  
-                      
+                  elif len(pot)==4:
                       if wordnum(pot[-1])!=-1: 
+                        self.pot[self.cust][-1]=str(wtm)
                         self.pot1[self.cust].append(self.pot[self.cust])
                         self.pot[self.cust] = ["hi"]
                         finalcart(self.pot1[self.cust][-1],obj,self.cust)
@@ -436,7 +447,7 @@ class sub1():
                         self.pot[self.cust][-1]=str(wtm)
                         self.pot1[self.cust].append(self.pot[self.cust])
                         self.pot[self.cust] = ["hi"]
-                        finalcart(self.pot1[self.cust][-1],obj,self.cust)
+                        finalcart(self.pot1[self.cust][-1],obj,self.cust,dictionary)
                         return sendtxt(switch3(pot[-1]),self.cust)
                       else:
                          self.pot[self.cust].pop(-1)
@@ -444,8 +455,10 @@ class sub1():
                            
                       return sendtxt(switch3(pot[-1]),self.cust)
                   else:
-                      #self.pot[self.cust].pop(-1)
+                      self.pot[self.cust].pop(-1)
                       return sendtxt(random_response(random.randint(1,3)),self.cust)
+                    
+                    
 #####################3333333333333333333333########################3###################3
               
 contacts  = {'+917666779269':sub1('+917666779269')}
@@ -472,6 +485,9 @@ def sms_reply(msg,remote_number = "+917666779269"):
       #mk = next(contacts[remote_number],am)
       textprocess(remote_number).cart[remote_number] = ""
       mk = rules()
-  return (str(mk))
+  return str(mk)
+      
+
+
       
  
